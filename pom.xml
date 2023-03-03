@@ -15,13 +15,13 @@
     </properties>
 
     <dependencies>
-        <!--低级功能-->
+        <!--基本功能-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
             <version>7.2.5</version>
         </dependency>
-        <!--低级功能-->
+        <!--基本功能-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>io</artifactId>
@@ -33,13 +33,13 @@
             <artifactId>layout</artifactId>
             <version>7.2.5</version>
         </dependency>
-        <!--AcroForm-->
+        <!--AcroForm(表单相关)-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>forms</artifactId>
             <version>7.2.5</version>
         </dependency>
-        <!--PDF/A特定功能-->
+        <!--PDF/A特定功能(PDF/A是PDF格式的一种，是为长期保存文件而设计的。基本上就是屏蔽了一些不适合的功能，如Javascript，音频、视频等等。)-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>pdfa</artifactId>
@@ -63,7 +63,7 @@
             <artifactId>barcodes</artifactId>
             <version>7.2.3</version>
         </dependency>
-        <!--不明-->
+        <!--不明(XML相关)-->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>hyph</artifactId>
