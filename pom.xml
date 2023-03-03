@@ -46,17 +46,17 @@
             <version>7.2.5</version>
         </dependency>
         <!--pdf测试用-->
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>pdftest</artifactId>
-            <version>7.1.6</version>
+<!--        <dependency>-->
+<!--            <groupId>com.itextpdf</groupId>-->
+<!--            <artifactId>pdftest</artifactId>-->
+<!--            <version>7.1.6</version>-->
 <!--            <exclusions>-->
 <!--                <exclusion>-->
 <!--                    <groupId>org.slf4j</groupId>-->
 <!--                    <artifactId>slf4j-api</artifactId>-->
 <!--                </exclusion>-->
 <!--            </exclusions>-->
-        </dependency>
+<!--        </dependency>-->
         <!--创建条形码-->
         <dependency>
             <groupId>com.itextpdf</groupId>
