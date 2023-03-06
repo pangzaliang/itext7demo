@@ -20,5 +20,6 @@ public class Main {
         Demo3 demo3 = new Demo3();
         demo3.示例1("C:/Users/dell/Desktop/1.pdf");
         demo3.示例2("C:/Users/dell/Desktop/2.pdf");
+        demo3.示例3("C:/Users/dell/Desktop/3.pdf");
     }
 }

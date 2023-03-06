@@ -5,13 +5,18 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceCmyk;
+import com.itextpdf.kernel.events.Event;
+import com.itextpdf.kernel.events.IEventHandler;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -19,16 +24,11 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.HorizontalAlignment;
-import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.*;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.DrawContext;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -187,6 +187,94 @@ public class Demo3 {
                     .curveTo(llx + r * b, ury, llx, ury - r * b, llx, ury - r)
                     .lineTo(llx, lly).stroke();
             super.drawBorder(drawContext);
+        }
+    }
+
+    public void 示例3(String path) throws IOException {
+
+        //Initialize PDF document
+        PdfDocument pdf = new PdfDocument(new PdfWriter(path));
+        pdf.addEventHandler(PdfDocumentEvent.END_PAGE, new MyEventHandler());
+
+        // Initialize document
+        Document document = new Document(pdf);
+
+        Paragraph p = new Paragraph("List of reported UFO sightings in 20th century")
+                .setTextAlignment(TextAlignment.CENTER).setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD)).setFontSize(14);
+        document.add(p);
+
+
+
+        Table table = new Table(UnitValue.createPercentArray(new float[]{3, 5, 7, 4}));
+
+        BufferedReader br = new BufferedReader(new FileReader("src/main/resources/csv/ufo.csv"));
+        String line = br.readLine();
+        process3(table, line, PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD), true);
+        while ((line = br.readLine()) != null) {
+            process3(table, line, PdfFontFactory.createFont(StandardFonts.HELVETICA), false);
+        }
+        br.close();
+
+        document.add(table);
+
+        document.close();
+    }
+
+    public void process3(Table table, String line, PdfFont font, boolean isHeader) {
+        StringTokenizer tokenizer = new StringTokenizer(line, ";");
+        while (tokenizer.hasMoreTokens()) {
+            if (isHeader) {
+                table.addHeaderCell(new Cell().add(new Paragraph(tokenizer.nextToken()).setFont(font)).setFontSize(9).setBorder(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+            } else {
+                table.addCell(new Cell().add(new Paragraph(tokenizer.nextToken()).setFont(font)).setFontSize(9).setBorder(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+            }
+        }
+    }
+
+    protected static class MyEventHandler implements IEventHandler{
+
+        public void handleEvent(Event event) {
+            PdfDocumentEvent docEvent = (PdfDocumentEvent) event;
+            PdfDocument pdfDoc = docEvent.getDocument();
+            PdfPage page = docEvent.getPage();
+            int pageNumber = pdfDoc.getPageNumber(page);
+            Rectangle pageSize = page.getPageSize();
+            PdfCanvas pdfCanvas = new PdfCanvas(page.newContentStreamBefore(), page.getResources(), pdfDoc);
+
+            //Set background
+            Color limeColor = new DeviceCmyk(0.208f, 0, 0.584f, 0);
+            Color blueColor = new DeviceCmyk(0.445f, 0.0546f, 0, 0.0667f);
+            pdfCanvas.saveState()
+                    .setFillColor(pageNumber % 2 == 1 ? limeColor : blueColor)
+                    .rectangle(pageSize.getLeft(), pageSize.getBottom(), pageSize.getWidth(), pageSize.getHeight())
+                    .fill().restoreState();
+
+            //Add header and footer
+            try {
+                pdfCanvas.beginText()
+                        .setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 9)
+                        .moveText(pageSize.getWidth() / 2 - 60, pageSize.getTop() - 20)
+                        .showText("THE TRUTH IS OUT THERE")
+                        .moveText(60, -pageSize.getTop() + 30)
+                        .showText(String.valueOf(pageNumber))
+                        .endText();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            //Add watermark
+            Canvas canvas = new Canvas(pdfCanvas, page.getPageSize());
+            canvas.setFontColor(ColorConstants.WHITE);
+            canvas.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(60));
+            try {
+                canvas.setProperty(Property.FONT, PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            canvas.showTextAligned(new Paragraph("CONFIDENTIAL"), 298, 421, pdfDoc.getPageNumber(page),
+                    TextAlignment.CENTER, VerticalAlignment.MIDDLE, 45);
+
+            pdfCanvas.release();
         }
     }
 }
