@@ -38,7 +38,7 @@ public class Demo1 {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
-        // 使用TimesRoMan字体
+        // 使用TimesRoMan字体(使用PDF字体工厂)创建字体 StandardFonts类里面都是type1字体
         PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);
         // 创建一个段落使用设置字体
         document.add(new Paragraph("iText is:").setFont(font));

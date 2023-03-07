@@ -47,21 +47,30 @@ public class Demo3 {
 
     public void 示例1 (String path) throws IOException {
 
+        // 初始化一个PDF文档，没有页
         PdfDocument pdf = new PdfDocument(new PdfWriter(path));
 
+        // 设置页大小为A5
         PageSize ps = PageSize.A5;
 
+        // 创建一页
         Document document = new Document(pdf, ps);
 
+        // 内容到页边的距离
         float offSet = 36;
+        // 列宽度
         float columnWidth = (ps.getWidth() - offSet * 2 + 10) / 3;
+        // 列高度
         float columnHeight = ps.getHeight() - offSet * 2;
 
         Rectangle[] columns = {new Rectangle(offSet - 5, offSet, columnWidth, columnHeight),
                 new Rectangle(offSet + columnWidth, offSet, columnWidth, columnHeight),
                 new Rectangle(offSet + columnWidth * 2 + 5, offSet, columnWidth, columnHeight)};
+
+        // 将三块区域设置为可变文档
         document.setRenderer(new ColumnDocumentRenderer(document, columns));
 
+        // 设置图像和文字
         Image apple = new Image(ImageDataFactory.create(APPLE_IMG)).setWidth(columnWidth);
         String articleApple = new String(Files.readAllBytes(Paths.get(APPLE_TXT)), StandardCharsets.UTF_8);
         Demo3.addArticle(document, "Apple Encryption Engineers, if Ordered to Unlock iPhone, Might Resist", "By JOHN MARKOFF MARCH 18, 2016", apple, articleApple);
@@ -71,7 +80,7 @@ public class Demo3 {
         Image inst = new Image(ImageDataFactory.create(INST_IMG)).setWidth(columnWidth);
         String articleInstagram = new String(Files.readAllBytes(Paths.get(INST_TXT)), StandardCharsets.UTF_8);
         Demo3.addArticle(document, "Instagram May Change Your Feed, Personalizing It With an Algorithm","By MIKE ISAAC MARCH 15, 2016", inst, articleInstagram);
-
+        // 关闭
         document.close();
     }
 
@@ -84,6 +93,7 @@ public class Demo3 {
      * @param text 内容
      */
     public static void addArticle(Document doc, String title, String author, Image img, String text) throws IOException {
+        // 创建标题段落，指定字体和大小
         Paragraph p1 = new Paragraph(title)
                 .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD))
                 .setFontSize(14);
@@ -92,6 +102,7 @@ public class Demo3 {
         Paragraph p2 = new Paragraph()
                 .setFont(PdfFontFactory.createFont(StandardFonts.HELVETICA))
                 .setFontSize(6)
+                // 设置颜色
                 .setFontColor(ColorConstants.GRAY)
                 .add(author);
         doc.add(p2);
@@ -103,6 +114,7 @@ public class Demo3 {
     }
 
 
+    // 绿色 使用CMYK颜色格式（四色印刷模式）
     Color greenColor = new DeviceCmyk(0.78f, 0, 0.81f, 0.21f);
     Color yellowColor = new DeviceCmyk(0, 0, 0.76f, 0.01f);
     Color redColor = new DeviceCmyk(0, 0.76f, 0.86f, 0.01f);
@@ -110,15 +122,22 @@ public class Demo3 {
 
     public void 示例2 (String path) throws IOException {
         PdfDocument pdf = new PdfDocument(new PdfWriter(path));
+        // 842*680大小的页
         PageSize ps = new PageSize(842, 680);
 
         Document document = new Document(pdf, ps);
 
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         PdfFont bold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+
+        // 二维网格
         Table table = new Table(UnitValue.createPercentArray(new float[]{1.5f, 7, 2, 2, 2, 2, 3, 4, 4, 2}));
+        // 文本居中
         table.setTextAlignment(TextAlignment.CENTER)
+                // 水平对齐
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+        // 读取数据
         BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("src/main/resources/csv/premier_league.csv")), StandardCharsets.UTF_8));
         String line = br.readLine();
         process(table, line, bold, true);
@@ -133,19 +152,34 @@ public class Demo3 {
         document.close();
     }
 
+    /**
+     * 数据输出
+     * @param table PDF table 二维表格
+     * @param line 行内容
+     * @param font PDF字体
+     * @param isHeader 是否为表头
+     */
     public void process(Table table, String line, PdfFont font, boolean isHeader) {
+        // 对字符串根据特定字符进行分组
         StringTokenizer tokenizer = new StringTokenizer(line, ";");
+
+        // 列数
         int columnNumber = 0;
+        // 类似于迭代器
         while (tokenizer.hasMoreTokens()) {
             if (isHeader) {
+                // 表格创建新列 创建新段落 这是表头
                 Cell cell = new Cell().add(new Paragraph(tokenizer.nextToken()));
+                // 设置圆角
                 cell.setNextRenderer(new RoundedCornersCellRenderer(cell));
                 cell.setPadding(5).setBorder(null);
+                // 表格添加列
                 table.addHeaderCell(cell);
             } else {
                 columnNumber++;
                 Cell cell = new Cell().add(new Paragraph(tokenizer.nextToken()));
                 cell.setFont(font).setBorder(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                // 4,5,6列为其他背景色
                 switch (columnNumber) {
                     case 4:
                         cell.setBackgroundColor(greenColor);
@@ -167,10 +201,18 @@ public class Demo3 {
     }
 
     private static class RoundedCornersCellRenderer extends CellRenderer {
+        /**
+         * 圆角单元格渲染器
+         * @param modelElement 列
+         */
         public RoundedCornersCellRenderer(Cell modelElement) {
             super(modelElement);
         }
 
+        /**
+         * 绘制边框
+         * @param drawContext the context (canvas, document, etc) of this drawing operation.
+         */
         @Override
         public void drawBorder(DrawContext drawContext) {
             Rectangle rectangle = getOccupiedAreaBBox();
