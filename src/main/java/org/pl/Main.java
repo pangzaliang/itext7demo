@@ -17,9 +17,18 @@ public class Main {
 //
 //        demo2.示例1("C:/Users/dell/Desktop/1.pdf");
 
-        Demo3 demo3 = new Demo3();
-        demo3.示例1("C:/Users/dell/Desktop/1.pdf");
-        demo3.示例2("C:/Users/dell/Desktop/2.pdf");
-        demo3.示例3("C:/Users/dell/Desktop/3.pdf");
+//        Demo3 demo3 = new Demo3();
+//        demo3.示例1("C:/Users/dell/Desktop/1.pdf");
+//        demo3.示例2("C:/Users/dell/Desktop/2.pdf");
+//        demo3.示例3("C:/Users/dell/Desktop/3.pdf");
+
+//        Demo4 demo4 = new Demo4();
+//        demo4.示例1("C:/Users/dell/Desktop/1.pdf");
+//        demo4.示例2("C:/Users/dell/Desktop/2.pdf");
+//        demo4.示例3("C:/Users/dell/Desktop/3.pdf");
+
+        DemoOCR demoOCR = new DemoOCR();
+        demoOCR.PDFOCR("C:\\Users\\dell\\Desktop\\微信截图_20230307170551.png",
+                "C:/Users/dell/Desktop/999.pdf");
     }
 }

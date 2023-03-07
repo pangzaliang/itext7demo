@@ -81,5 +81,11 @@
             <artifactId>sign</artifactId>
             <version>7.2.3</version>
         </dependency>
+        <!--PDF OCR 训练模型-->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>pdfocr-tesseract4</artifactId>
+            <version>2.0.2</version>
+        </dependency>
     </dependencies>
 </project>
