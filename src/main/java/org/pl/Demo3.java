@@ -317,6 +317,7 @@ public class Demo3 {
                     TextAlignment.CENTER, VerticalAlignment.MIDDLE, 45);
 
             pdfCanvas.release();
+            canvas.close();
         }
     }
 }
